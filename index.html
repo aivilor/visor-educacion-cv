@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa 3D - Centros educativos Valencia</title>
+
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <script src="https://unpkg.com/deck.gl@8.9.0/dist.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <!-- Hover info panel -->
+    <div id="info-panel" class="panel info-panel">
+        <div id="info-panel-header" class="panel-header"></div>
+        <div id="info-panel-body" class="panel-body"></div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend-panel" class="panel legend-panel">
+        <div class="panel-header">USO</div>
+        <div id="legend-items" class="panel-body"></div>
+    </div>
+
+    <!-- data.js must be loaded BEFORE script.js: it defines `geojsonData` -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
