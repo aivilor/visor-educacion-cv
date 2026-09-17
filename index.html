@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Mapa 3D Centros Educativos</title>
+<script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+<script src="https://unpkg.com/maplibre-gl@^4.0.0/dist/maplibre-gl.js"></script>
+<link href="https://unpkg.com/maplibre-gl@^4.0.0/dist/maplibre-gl.css" rel="stylesheet" />
+<link href="style.css" rel="stylesheet" />
+</head>
+<body>
+<div id="map"></div>
+
+<div id="controls">
+  <div class="controls-header">FILTROS</div>
+  <div class="controls-body">
+    <div class="field-row">
+      <label for="regimen-filter">Régimen:</label>
+      <select id="regimen-filter">
+        <option value="TODOS">Todos</option>
+        <option value="Privat concertat">Privat concertat</option>
+<option value="Privat no concertat">Privat no concertat</option>
+<option value="Públic">Públic</option>
+      </select>
+    </div>
+
+    <div class="section-label">TIPO EDUCATIVO (varias a la vez)</div>
+    <div class="cat-checkbox-group">
+      <label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="INFANTIL">Infantil</label>
+<label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="PRIMARIA">Primaria</label>
+<label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="SECUNDARIA">Secundaria</label>
+<label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="OTROS">Otros</label>
+    </div>
+
+    <div class="section-label">CAPAS ADICIONALES</div>
+    <div class="cat-checkbox-group">
+      <label class="cat-checkbox"><input type="checkbox" id="chk-solares" checked><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgb(39,174,96);margin-right:2px;flex-shrink:0;"></span>Posibles solares</label>
+      <label class="cat-checkbox"><input type="checkbox" id="chk-construccion" checked><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgb(41,128,185);margin-right:2px;flex-shrink:0;"></span>Dotaciones con construcción</label>
+    </div>
+
+    <div class="parcel-count" id="parcel-count"></div>
+  </div>
+</div>
+
+<div id="basemap-switcher">
+  <button id="btn-mapa" class="active">🗺️ Mapa</button>
+  <button id="btn-satelite">🛰️ Satélite</button>
+</div>
+
+
+    <div style="
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        font-family: 'Segoe UI', Arial, sans-serif;
+        z-index: 9999;
+        max-height: 320px;
+        overflow-y: auto;
+        pointer-events: auto;
+        min-width: 190px;
+    ">
+        <div style="
+            background: #2c3e50;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px 10px 0 0;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        ">
+            USO
+        </div>
+        <div style="padding: 8px 8px;">
+            
+        <div style="
+            display:flex;
+            align-items:center;
+            padding: 5px 6px;
+            border-radius: 5px;
+            transition: background 0.15s ease;
+        " onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background='transparent'">
+            <div style="
+                width:16px;
+                height:16px;
+                background:rgb(64, 64, 64);
+                margin-right:10px;
+                border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
+            "></div>
+            <span style="font-size:12.5px; color:#2c3e50; font-weight:500;">Edificación</span>
+        </div>
+        
+        <div style="
+            display:flex;
+            align-items:center;
+            padding: 5px 6px;
+            border-radius: 5px;
+            transition: background 0.15s ease;
+        " onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background='transparent'">
+            <div style="
+                width:16px;
+                height:16px;
+                background:rgb(200, 200, 200);
+                margin-right:10px;
+                border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
+            "></div>
+            <span style="font-size:12.5px; color:#2c3e50; font-weight:500;">Pavimento</span>
+        </div>
+        
+        <div style="
+            display:flex;
+            align-items:center;
+            padding: 5px 6px;
+            border-radius: 5px;
+            transition: background 0.15s ease;
+        " onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background='transparent'">
+            <div style="
+                width:16px;
+                height:16px;
+                background:rgb(231, 76, 60);
+                margin-right:10px;
+                border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
+            "></div>
+            <span style="font-size:12.5px; color:#2c3e50; font-weight:500;">Zona deportiva</span>
+        </div>
+        
+        <div style="
+            display:flex;
+            align-items:center;
+            padding: 5px 6px;
+            border-radius: 5px;
+            transition: background 0.15s ease;
+        " onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background='transparent'">
+            <div style="
+                width:16px;
+                height:16px;
+                background:rgb(121, 85, 61);
+                margin-right:10px;
+                border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
+            "></div>
+            <span style="font-size:12.5px; color:#2c3e50; font-weight:500;">Otros usos</span>
+        </div>
+        
+        <div style="
+            display:flex;
+            align-items:center;
+            padding: 5px 6px;
+            border-radius: 5px;
+            transition: background 0.15s ease;
+        " onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background='transparent'">
+            <div style="
+                width:16px;
+                height:16px;
+                background:rgb(39, 174, 96);
+                margin-right:10px;
+                border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
+            "></div>
+            <span style="font-size:12.5px; color:#2c3e50; font-weight:500;">Zona verde urbana</span>
+        </div>
+        
+        <div style="
+            display:flex;
+            align-items:center;
+            padding: 5px 6px;
+            border-radius: 5px;
+            transition: background 0.15s ease;
+        " onmouseover="this.style.background='#f5f6fa'" onmouseout="this.style.background='transparent'">
+            <div style="
+                width:16px;
+                height:16px;
+                background:rgb(52, 152, 219);
+                margin-right:10px;
+                border-radius: 4px;
+                border: 1px solid rgba(0,0,0,0.15);
+                flex-shrink: 0;
+            "></div>
+            <span style="font-size:12.5px; color:#2c3e50; font-weight:500;">Piscina</span>
+        </div>
+        
+        </div>
+    </div>
+    
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
