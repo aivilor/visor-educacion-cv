@@ -15,53 +15,65 @@
   <div class="controls-header">CAPAS Y FILTROS</div>
   <div class="controls-body">
 
+    <!-- CAPAS: la selección inicial -- más prominente (tamaño, peso y un
+    punto de color por capa) que cualquier subfiltro que dependa de ella. -->
     <div class="section-label">CAPAS</div>
     <div class="cat-checkbox-group layer-toggle-group">
-      <label class="cat-checkbox"><input type="checkbox" id="chk-layer-centros" checked>Centros educativos</label>
-      <label class="cat-checkbox"><input type="checkbox" id="chk-layer-solares" checked>Solares</label>
-      <label class="cat-checkbox"><input type="checkbox" id="chk-layer-secciones">Secciones censales</label>
+      <label class="cat-checkbox"><input type="checkbox" id="chk-layer-centros" checked><span class="layer-dot" style="background:#2c3e50;"></span>Centros educativos</label>
+      <label class="cat-checkbox"><input type="checkbox" id="chk-layer-reservas" checked><span class="layer-dot" style="background:rgb(0,150,136);"></span>Reservas</label>
+      <label class="cat-checkbox"><input type="checkbox" id="chk-layer-secciones"><span class="layer-dot" style="background:rgb(138,17,82);"></span>Secciones censales</label>
     </div>
 
+    <!-- Subfiltros de Centros: agrupados bajo el mismo color que su punto
+    en CAPAS, para que se lean como parte de esa capa y no como opciones
+    sueltas del panel. -->
     <div id="panel-centros">
       <div class="panel-divider"></div>
-      <div class="field-row">
-        <label for="regimen-filter">Régimen:</label>
-        <select id="regimen-filter">
-          <option value="TODOS">Todos</option>
-          <option value="Privat concertat">Privado concertado</option>
+      <div class="layer-subpanel" style="border-left-color:#2c3e50;">
+        <div class="field-row">
+          <label for="regimen-filter">Régimen:</label>
+          <select id="regimen-filter">
+            <option value="TODOS">Todos</option>
+            <option value="Privat concertat">Privado concertado</option>
 <option value="Privat no concertat">Privado</option>
 <option value="Públic">Público</option>
-        </select>
-      </div>
+          </select>
+        </div>
 
-      <div class="section-label">TIPO EDUCATIVO (varias a la vez)</div>
-      <div class="cat-checkbox-group">
-        <label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="INFANTIL">Infantil</label>
+        <div class="section-label">TIPO EDUCATIVO (varias a la vez)</div>
+        <div class="cat-checkbox-group">
+          <label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="INFANTIL">Infantil</label>
 <label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="PRIMARIA">Primaria</label>
 <label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="SECUNDARIA">Secundaria</label>
 <label class="cat-checkbox"><input type="checkbox" class="tipo-checkbox" value="OTROS">Otros</label>
+        </div>
+
+        <div class="switch-row">
+          <span class="switch-label">Aulas prefabricadas (agrupación)</span>
+          <label class="switch">
+            <input type="checkbox" id="chk-prefab-cluster">
+            <span class="switch-slider"></span>
+          </label>
+        </div>
       </div>
     </div>
 
-    <div id="panel-solares">
-      <div class="panel-divider"></div>
-      <div class="section-label">TIPOS DE SOLAR</div>
-      <div class="cat-checkbox-group">
-        <label class="cat-checkbox"><input type="checkbox" id="chk-solares" checked><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgb(0,150,136);margin-right:2px;flex-shrink:0;"></span>Posibles solares</label>
-        <label class="cat-checkbox"><input type="checkbox" id="chk-construccion" checked><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgb(243,156,18);margin-right:2px;flex-shrink:0;"></span>Dotaciones con construcción</label>
-      </div>
-    </div>
+    <!-- Reservas no tiene subfiltros en este panel: su único filtro (tipos
+    de reserva) vive junto a su leyenda, arriba a la derecha. -->
 
+    <!-- Subfiltro de Secciones censales: mismo patrón que Centros. -->
     <div id="panel-secciones" style="display:none;">
       <div class="panel-divider"></div>
-      <div class="section-label">TRAMO DE EDAD</div>
-      <div class="field-row">
-        <select id="tramo-select">
-          <option value="e00_04">0 a 4 años</option>
+      <div class="layer-subpanel" style="border-left-color:rgb(138,17,82);">
+        <div class="section-label">TRAMO DE EDAD</div>
+        <div class="field-row">
+          <select id="tramo-select">
+            <option value="e00_04">0 a 4 años</option>
 <option value="e05_09">5 a 9 años</option>
 <option value="e10_14">10 a 14 años</option>
 <option value="e15_19">15 a 19 años</option>
-        </select>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -74,34 +86,18 @@
   <button id="btn-satelite">🛰️ Satélite</button>
 </div>
 
-
-    <div id="legend-uso" style="
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-        font-family: 'Segoe UI', Arial, sans-serif;
-        z-index: 9999;
-        max-height: 320px;
-        overflow-y: auto;
-        pointer-events: auto;
-        min-width: 190px;
-        
-    ">
-        <div style="
-            background: #2c3e50;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 10px 10px 0 0;
-            font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 0.3px;
-        ">
+<!-- Leyendas de la derecha: una "receta" visual común para las 4 (ver CSS
+de #legends-right), cada una con la cabecera del color de acento de su
+capa -- el mismo color que su punto en CAPAS y que el borde de su
+subfiltro, si lo tiene. La de Reservas dobla como filtro: sus checkboxes
+muestran/ocultan cada tipo, igual que antes en el panel de la izquierda. -->
+<div id="legends-right">
+  
+    <div id="legend-uso">
+        <div class="legend-right-header" style="background:#2c3e50;">
             USO
         </div>
-        <div style="padding: 8px 8px;">
+        <div class="legend-right-body">
             
         <div style="
             display:flex;
@@ -221,32 +217,26 @@
     </div>
     
 
-<div id="legend-secciones" style="
-    display: none;
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    font-family: 'Segoe UI', Arial, sans-serif;
-    z-index: 9999;
-    min-width: 200px;
-    overflow: hidden;
-">
-    <div style="
-        background: #2c3e50;
-        color: white;
-        padding: 8px 14px;
-        border-radius: 10px 10px 0 0;
-        font-weight: 600;
-        font-size: 13px;
-        letter-spacing: 0.3px;
-    ">
-        TRAMOS DE EDAD
-    </div>
-    <div id="legend-secciones-body" style="padding: 12px 14px;"></div>
+  <div id="legend-reservas" style="display: none;">
+      <div class="legend-right-header" style="background:rgb(0,150,136);">TIPOS DE RESERVA</div>
+      <div class="legend-right-body cat-checkbox-group" style="margin-bottom:0;">
+        <label class="cat-checkbox"><input type="checkbox" id="chk-reserva-sin-construccion" checked><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgb(0,150,136);margin-right:2px;flex-shrink:0;"></span>Reservas sin construcción</label>
+        <label class="cat-checkbox"><input type="checkbox" id="chk-reserva-con-construccion" checked><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:rgb(243,156,18);margin-right:2px;flex-shrink:0;"></span>Reservas con construcción</label>
+      </div>
+  </div>
+
+  <div id="legend-secciones" style="display: none;">
+      <div class="legend-right-header" style="background:rgb(138,17,82);">TRAMOS DE EDAD</div>
+      <div id="legend-secciones-body" class="legend-right-body"></div>
+  </div>
+
+  <div id="legend-prefab" style="display: none;">
+      <div class="legend-right-header" style="background:#2c3e50;">AULAS PREFABRICADAS</div>
+      <div id="legend-prefab-body" class="legend-right-body"></div>
+  </div>
 </div>
+
+<div id="centro-pin-panel" style="display:none;"></div>
 
 <script src="data.js"></script>
 <script src="script.js"></script>

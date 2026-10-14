@@ -112,15 +112,99 @@ html, body, #map { margin:0; padding:0; height:100%; width:100%; }
   margin: 8px 0 10px;
 }
 
+/* --- CAPAS: la selección inicial, más prominente que cualquier filtro
+   que dependa de ella (tamaño y peso mayores, algo más de aire entre
+   opciones, y un punto de color que identifica cada capa y la conecta
+   visualmente con su propio bloque de subfiltros / leyenda). --- */
 #controls .layer-toggle-group {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin-bottom: 4px;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 #controls .layer-toggle-group .cat-checkbox {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14.5px;
+  padding: 4px 4px;
+}
+
+#controls .layer-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+}
+
+/* --- Subfiltros de cada capa: se agrupan bajo un borde del mismo color
+   que el punto de su capa en "CAPAS", para que se entienda a simple vista
+   que pertenecen a ella (en vez de ser opciones sueltas del panel). --- */
+#controls .layer-subpanel {
+  border-left: 3px solid transparent;
+  padding-left: 11px;
+  margin-left: 1px;
+}
+
+/* --- Interruptor (switch) on/off, usado para la capa de aulas
+   prefabricadas: más claro que un checkbox para una opción de capa
+   combinable que se activa/desactiva, en vez de una lista para marcar. --- */
+#controls .switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#controls .switch-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e2b38;
+}
+
+#controls .switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+#controls .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#controls .switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #ccc;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+#controls .switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+#controls .switch input:checked + .switch-slider {
+  background: linear-gradient(135deg, rgb(41,98,255), rgb(214,40,40));
+}
+
+#controls .switch input:checked + .switch-slider::before {
+  transform: translateX(16px);
 }
 
 /* --- Selector de capa base (mapa / satélite) --- */
@@ -160,4 +244,145 @@ html, body, #map { margin:0; padding:0; height:100%; width:100%; }
 #basemap-switcher button.active {
   background: #2c3e50;
   color: white;
+}
+
+/* --- Pestañas de centro (compartidas por la ficha de hover #centro-tooltip
+   y el panel fijado #centro-pin-content) ---
+   La ficha de HOVER tiene pointer-events: none en su contenedor (ver
+   getTooltip en script.js): así el ratón "atraviesa" la ficha y deck.gl
+   sigue detectando el centro bajo el cursor sin interrupción (si el
+   contenedor capturase el puntero, al moverse sobre la ficha deck.gl perdía
+   el hover, la ocultaba, el cursor volvía a quedar sobre el centro, se
+   mostraba de nuevo... y la ficha parpadeaba). Solo los botones de pestaña
+   reactivan pointer-events, así siguen siendo clicables sin que el resto de
+   la ficha interfiera. El panel FIJADO no tiene esa restricción (es un
+   elemento normal del documento), pero comparte la misma clase sin
+   problema. */
+.centro-tabs {
+  display: flex;
+  background: #233240;
+}
+
+.centro-tab-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 8px 6px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  pointer-events: auto;
+}
+
+.centro-tab-btn.active {
+  color: white;
+  border-bottom-color: #3498db;
+  background: rgba(255,255,255,0.06);
+}
+
+/* --- Panel de centro fijado por clic: NO flota ni sigue al ratón. Se ancla
+   (left/top puestos desde script.js, en renderPinnedCentroPanel) en el
+   punto exacto de pantalla donde se hizo clic, y se queda estático ahí
+   -- aunque se haga zoom o se mueva el mapa -- hasta que se cierre con la X
+   o se vuelva a hacer clic en el mismo centro. --- */
+#centro-pin-panel {
+  position: fixed;
+  width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  z-index: 9998;
+}
+
+#centro-pin-panel .pin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #2c3e50;
+  color: white;
+  padding: 10px 10px 10px 14px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#centro-pin-panel .pin-close-btn {
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+#centro-pin-panel .pin-close-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+#centro-pin-panel .pin-body {
+  padding: 12px 14px;
+  background: white;
+}
+
+/* --- Pie de la ficha de hover: pista de que se puede fijar con clic --- */
+#centro-tooltip .centro-pin-hint {
+  padding: 6px 14px;
+  background: #f7f9fa;
+  color: #8695a7;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border-top: 1px solid #eef0f2;
+}
+
+/* --- Leyendas apiladas en la esquina superior derecha: USO, tipos de
+   reserva, tramos de edad y aulas prefabricadas. Una misma "receta" visual
+   para las cuatro (mismo ancho, radio, sombra, cabecera y relleno del
+   cuerpo), para que se lean como un único sistema y no como piezas
+   sueltas -- la única diferencia entre ellas es el color de su cabecera,
+   que es el mismo color de acento que su capa tiene en "CAPAS". --- */
+#legends-right {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+#legends-right > div {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  width: 210px;
+  max-height: 320px;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+#legends-right .legend-right-header {
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px 10px 0 0;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+#legends-right .legend-right-body {
+  padding: 12px 14px;
 }
